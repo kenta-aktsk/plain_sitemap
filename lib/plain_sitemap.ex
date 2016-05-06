@@ -1,7 +1,5 @@
 defmodule PlainSitemap do
   use Application
-  @default_output_dir "priv/static"
-  @output_file_name "sitemap.xml.gz"
 
   def start(_type, _args) do
     PlainSitemap.Supervisor.start_link
@@ -17,6 +15,8 @@ defmodule PlainSitemap do
 
   defmacro urlset([do: block]) do
     quote location: :keep do
+      @default_output_dir "priv/static"
+      @output_file_name "sitemap.xml.gz"
       def render do
         PlainSitemap.Generator.flush
         unquote(block)
@@ -29,6 +29,16 @@ defmodule PlainSitemap do
             element(:priority, opts[:priority] || 1.0)
           ])
         end))
+      end
+      def refresh(app_name) when is_binary(app_name), do: refresh(String.to_atom(app_name))
+      def refresh(app_name) when is_atom(app_name) do
+        {:ok, _} = Application.ensure_all_started(app_name)
+        generator = (Application.get_env(:plain_sitemap, :generator) || raise "sitemap generator is not defined. see README.md")
+        path = Application.app_dir(app_name) |> Path.join(Application.get_env(:plain_sitemap, :output_dir, @default_output_dir)) |> Path.join(@output_file_name)
+        {:ok, file} = File.open path, [:utf8, :write, :compressed]
+        IO.write file, generator.render
+        File.close file
+        :init.stop
       end
     end
   end
@@ -68,13 +78,5 @@ defmodule PlainSitemap do
     quote do
       @default_host unquote(opts)[:default_host] || raise ":default_host must be given."
     end
-  end
-
-  def refresh(app_dir) do
-    generator = (Application.get_env(:plain_sitemap, :generator) || raise "sitemap generator is not defined. see README.md")
-    path = app_dir |> Path.join(Application.get_env(:plain_sitemap, :output_dir, @default_output_dir)) |> Path.join(@output_file_name)
-    {:ok, file} = File.open path, [:utf8, :write, :compressed]
-    IO.write file, generator.render
-    File.close file
   end
 end
