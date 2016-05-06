@@ -13,6 +13,6 @@ defmodule PlainSitemap.Generator do
   end
 
   def urlset do
-    Agent.get(__MODULE__, &(&1))
+    Agent.get(__MODULE__, &(&1 |> Enum.reverse))
   end
 end
