@@ -30,11 +30,10 @@ defmodule PlainSitemap do
           ])
         end))
       end
-      def refresh(app_name) when is_binary(app_name), do: refresh(String.to_atom(app_name))
-      def refresh(app_name) when is_atom(app_name) do
-        {:ok, _} = Application.ensure_all_started(app_name)
+      def refresh do
+        {:ok, _} = Application.ensure_all_started(@app)
         generator = (Application.get_env(:plain_sitemap, :generator) || raise "sitemap generator is not defined. see README.md")
-        path = Application.app_dir(app_name) |> Path.join(Application.get_env(:plain_sitemap, :output_dir, @default_output_dir)) |> Path.join(@output_file_name)
+        path = Application.app_dir(@app) |> Path.join(Application.get_env(:plain_sitemap, :output_dir, @default_output_dir)) |> Path.join(@output_file_name)
         {:ok, file} = File.open path, [:utf8, :write, :compressed]
         IO.write file, generator.render
         File.close file
@@ -76,6 +75,7 @@ defmodule PlainSitemap do
 
   defp config(opts) do
     quote do
+      @app unquote(opts)[:app] || raise ":app must be given."
       @default_host unquote(opts)[:default_host] || raise ":default_host must be given."
     end
   end
