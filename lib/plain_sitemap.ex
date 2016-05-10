@@ -37,7 +37,6 @@ defmodule PlainSitemap do
         {:ok, file} = File.open path, [:utf8, :write, :compressed]
         IO.write file, generator.render
         File.close file
-        :init.stop
       end
     end
   end
