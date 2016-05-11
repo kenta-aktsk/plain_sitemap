@@ -1,32 +1,39 @@
 defmodule PlainSitemap.Mixfile do
   use Mix.Project
 
+  @version "0.0.1"
+
   def project do
     [app: :plain_sitemap,
-     version: "0.0.1",
+     version: @version,
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps]
+     deps: deps,
+
+     # Hex
+     description: description,
+     package: package]
   end
 
-  # Configuration for the OTP application
-  #
-  # Type "mix help compile.app" for more information
+  defp description do
+    """
+    Very simple sitemap generator for Elixir inspired by sitemap_generator.
+    """
+  end
+
+  defp package do
+    [maintainers: ["Kenta Katsumata"],
+     licenses: ["MIT"],
+     links: %{"GitHub" => "https://github.com/kenta-aktsk/plain_sitemap"},
+     files: ~w(mix.exs README.md LICENSE lib)]
+  end
+
   def application do
     [applications: [:logger, :xml_builder, :timex, :ecto],
      mod: {PlainSitemap, []}]
   end
 
-  # Dependencies can be Hex packages:
-  #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options
   defp deps do
     [{:xml_builder, "~> 0.0.6"},
      {:timex, "~> 2.1"},
