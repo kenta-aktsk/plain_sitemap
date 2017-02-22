@@ -9,11 +9,11 @@ defmodule PlainSitemap.Mixfile do
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps,
+     deps: deps(),
 
      # Hex
-     description: description,
-     package: package]
+     description: description(),
+     package: package()]
   end
 
   defp description do
@@ -36,7 +36,7 @@ defmodule PlainSitemap.Mixfile do
 
   defp deps do
     [{:xml_builder, "~> 0.0.6"},
-     {:timex, "~> 2.1"},
-     {:ecto, "~> 1.1"}]
+     {:timex, "~> 3.1"},
+     {:ecto, "~> 2.1"}]
   end
 end
