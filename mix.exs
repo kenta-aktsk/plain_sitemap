@@ -35,7 +35,7 @@ defmodule PlainSitemap.Mixfile do
   end
 
   defp deps do
-    [{:xml_builder, "~> 0.0.6"},
+    [{:xml_builder, "~> 0.1.0"},
      {:timex, "~> 3.1"},
      {:ecto, "~> 2.1"}]
   end
